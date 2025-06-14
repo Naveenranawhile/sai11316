@@ -1,24 +1,28 @@
-# Stage 1: Build the app
+# Stage 1: Build the React app
 FROM node:18-alpine AS builder
 
 WORKDIR /app
 
+# Only copy package.json since package-lock.json doesn't exist
+COPY package.json ./
+
 # Install dependencies
-COPY package.json package-lock.json ./
 RUN npm install
 
-# Copy source code
+# Copy the rest of the project
 COPY . .
 
 # Build the app
 RUN npm run build
 
-# Stage 2: Serve with nginx
+# Stage 2: Serve the app with Nginx
 FROM nginx:latest AS deployer
 
-# Copy build files from builder
+# Copy the build output to Nginx HTML folder
 COPY --from=builder /app/build /usr/share/nginx/html
 
-# Optional: expose port and set default command
+# Expose port 80
 EXPOSE 80
+
+# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
