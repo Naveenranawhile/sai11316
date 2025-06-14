@@ -4,7 +4,7 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 
 # Only copy package.json since package-lock.json doesn't exist
-COPY package.json ./
+COPY package.json .
 
 # Install dependencies
 RUN npm install
